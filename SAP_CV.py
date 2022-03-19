@@ -65,6 +65,9 @@ if __name__ == '__main__':
     team_coords = [(450, 350), (590, 350), (740, 350), (890, 350), (1025, 350)]
 
     team = [None, None, None, None, None]
+    res = pag.size()
+    if res != (1920, 1080):
+        print('not 1920x1080')
 
     shop = identify_shop(slot_coords)
     print('{}|{}|{}|{}|{}|{}|{}|'.format(*shop.values()))
