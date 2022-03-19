@@ -47,23 +47,31 @@ class Shop:
         """
         Reroll the shop
         """
-        pag.click(200, 950)
+        pag.moveTo(200, 950)
+        time.sleep(.1)
+        pag.click()
 
     def end_turn(self):
         """
         End turn. Assumes gold is 0.
         """
-        pag.click(1700, 950)
+        pag.moveTo(1700, 950)
+        time.sleep(.1)
+        pag.click()
+
     def buy(self, shop_slot, team_slot):
         """
         buys the pet or food in shop_slot __. 0 - 6
         puts the pet/food on team_slot
         """
-        pag.click(self.shop_coords[shop_slot][0] + 50, self.shop_coords[shop_slot][1] + 50)
+        pag.moveTo(self.shop_coords[shop_slot][0] + 50, self.shop_coords[shop_slot][1] + 50)
+        time.sleep(.1)
+        pag.click()
         time.sleep(.5)
         pag.moveTo(self.team_coords[team_slot][0] + 50, self.team_coords[team_slot][1] + 50)
         time.sleep(.5)
         pag.click()
+
 def identify_pet(top_left):
     """
     Uses the top left coordinate of a shop or team slot to identify a pet.
@@ -128,3 +136,7 @@ if __name__ == '__main__':
     my_shop.buy(2, 0)
     time.sleep(2)
     my_shop.buy(1, 1)
+    time.sleep(2)
+    my_shop.buy(0, 2)
+    time.sleep(1)
+    my_shop.end_turn()
