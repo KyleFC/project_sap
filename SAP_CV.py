@@ -2,9 +2,58 @@ import pyautogui as pag
 import sys
 import os
 import time
-"""
 
-"""
+class Shop:
+    #might need to add some variables to the init at some point (tier?)
+    def __init__(self, shop_coordinates, team_coordinates, shop_dictionary = {}, team_dictionary = {}):
+        self.shop_coords = shop_coordinates
+        self.team_coords = team_coordinates
+        self.shop_dict = shop_dictionary
+        self.team_dict = team_dictionary
+
+    def print_shop(self):
+        """
+        print a formatted representation of the animals/food in every shop slot. 
+        """
+        print("{}|{}|{}|{}|{}|{}|{}".format(*self.shop_dict.values()))
+
+    def get_shop_coords(self):
+        """
+        return shop slot coordinates as a list
+        """
+        return self.shop_coords
+
+    def get_team_coords(self):
+        """
+        return team slot coordinates as a list
+        """
+        return self.team_coords
+
+    def update(self):
+        """
+        takes a list of the top left coordinates for each shop slot
+        runs the identify function over all shop slots.
+        returns a dictionary of shop slots: animal/food or None
+        """
+        for i, tl_coords in enumerate(self.shop_coords):
+
+            if i < 5:
+                self.shop_dict[f'slot_{i}'] = identify_pet(tl_coords)
+            else:
+                self.shop_dict[f'slot_{i}'] = identify_food(tl_coords)
+        print('shop has been updated')
+
+    def roll():
+        """
+        Reroll the shop
+        """
+        pag.click(1700, 900)
+
+    def buy(top_left):
+        """
+        Uses the top_left coordinates of an animal or food to buy it.
+        """
+        pag.click(top_left[0] + 50, top_left[1] + 50)
 
 def identify_pet(top_left):
     """
@@ -48,7 +97,7 @@ def identify_shop(tl_list):
     """
     takes a list of the top left coordinates for each shop slot
     runs the identify function over all shop slots.
-    returns a dictionary of shop slots: animal/food
+    returns a dictionary of shop slots: animal/food or None
     """
     shop = {}
     for i, tl_coords in enumerate(tl_list):
@@ -58,6 +107,9 @@ def identify_shop(tl_list):
         else:
             shop[f'slot_{i}'] = identify_food(tl_coords)
     return shop
+
+
+
 if __name__ == '__main__':
 
 
@@ -69,5 +121,8 @@ if __name__ == '__main__':
     if res != (1920, 1080):
         print('not 1920x1080')
 
-    shop = identify_shop(slot_coords)
-    print('{}|{}|{}|{}|{}|{}|{}|'.format(*shop.values()))
+    my_shop = Shop(slot_coords, team_coords)
+    time.sleep(2)
+    coords = my_shop.get_shop_coords()
+    my_shop.update()
+    my_shop.print_shop()
