@@ -148,6 +148,7 @@ class Game:
         if shop_slot < 5:
             for i in range(5 - shop_slot):
                 self.shop.shop_dict[f'slot_{shop_slot}'] = self.shop.shop_dict[f'slot_{shop_slot+1}']
+        self.team.team_dict[f'slot_{team_slot}'] = self.shop.shop_dict[f'slot_{shop_slot}']
         time.sleep(1)
 
     def sell(self, slot):
@@ -163,6 +164,8 @@ class Game:
         time.sleep(.1)
         pag.click()
         time.sleep(1)
+        print(f'sold {self.team.team_dict[f"slot_{slot}"]} in slot {slot}')
+        self.team.team_dict[f'slot_{slot}'] = None
 
     def roll(self):
         """
