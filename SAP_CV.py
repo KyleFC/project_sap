@@ -2,12 +2,19 @@ import pyautogui as pag
 import sys
 import os
 import time
+import random
+
+class Pet:
+    #set up events and add them here
+    def __init__(self, attack, health, ability=None):
+        pass
+    pass
 
 class Shop:
     #might need to add some variables to the init at some point (tier?)
-    def __init__(self, shop_coordinates, team_coordinates, shop_dictionary = {}, team_dictionary = {}):
-        self.shop_coords = shop_coordinates
-        self.team_coords = team_coordinates
+    def __init__(self, shop_dictionary = {}, team_dictionary = {}, cans=0):
+        self.shop_coords = [(450, 630), (590, 630), (740, 630), (890, 630), (1025, 630), (1175, 630), (1325, 630)]
+        self.team_coords = [(450, 350), (590, 350), (740, 350), (890, 350), (1025, 350)]
         self.shop_dict = shop_dictionary
         self.team_dict = team_dictionary
 
@@ -46,10 +53,9 @@ class Shop:
 class Team:
     #team_dict is a dictionary of strings representing animals but should be a
     #dictionary of pet classes in the future
-    def __init__(self, team_dictionary, team_coordinates):
+    def __init__(self, team_dictionary,):
         self.team_dict = team_dictionary
-        #maybe add the +50 to x and y here eventually if i know i'm not doing any cv stuff here
-        self.team_coords = team_coordinates
+        self.team_coords = [(450, 350), (590, 350), (740, 350), (890, 350), (1025, 350)]
 
     def print_team(self):
         """
@@ -65,6 +71,23 @@ class Game:
         self.gold = gold
         self.round = round
         self.hearts = hearts
+
+    def pick_name(self):
+        #should change to pick_name(self, option1, option2)?
+        """
+        pick a random name
+        """
+        name_coords = [(400, 400), (1000, 400), (1500, 400), (400, 700), (1000, 700), (1500, 700)]
+        n1 = random.choice(name_coords[:3])
+        n2 = random.choice(name_coords[3:])
+        pag.moveTo(n1)
+        time.sleep(.1)
+        pag.click()
+        time.sleep(.1)
+        pag.moveTo(n2)
+        time.sleep(.1)
+        pag.click()
+        time.sleep(1)
 
     def move(self, slot1, slot2, click=False):
         """
@@ -82,6 +105,7 @@ class Game:
             pag.moveTo(slot_coords_2)
             time.sleep(.1)
             pag.click()
+            time.sleep(1)
 
         #inner team logic
         pet = self.team.team_dict[f'slot_{slot1}']
@@ -106,20 +130,40 @@ class Game:
                 #print(f'pushing {slot1+i} to {slot1+i+1}')
             self.team.team_dict[f'slot_{slot2}'] = pet
 
-    def buy(self, item, shop_slot, team_slot):
+    def buy(self, shop_slot, team_slot):
         """
         buys the pet or food in shop_slot __. 0 - 6
         puts the pet/food on team_slot
         adds the animal
         """
-        pag.moveTo(self.shop_coords[shop_slot][0] + 50, self.shop_coords[shop_slot][1] + 50)
+        pag.moveTo(self.shop.shop_coords[shop_slot][0] + 50, self.shop.shop_coords[shop_slot][1] + 50)
         time.sleep(.1)
         pag.click()
         time.sleep(.5)
-        pag.moveTo(self.team_coords[team_slot][0] + 50, self.team_coords[team_slot][1] + 50)
+        pag.moveTo(self.shop.team_coords[team_slot][0] + 50, self.shop.team_coords[team_slot][1] + 50)
         time.sleep(.5)
         pag.click()
-        
+        self.gold -= 3
+        print(f'bought {self.shop.shop_dict[f"slot_{shop_slot}"]} and put it in slot {team_slot}')
+        if shop_slot < 5:
+            for i in range(5 - shop_slot):
+                self.shop.shop_dict[f'slot_{shop_slot}'] = self.shop.shop_dict[f'slot_{shop_slot+1}']
+        time.sleep(1)
+
+    def sell(self, slot):
+        #once a pet class is implemented this will add the correct amount of gold
+        """
+        sell the pet in slot_?
+        """
+        pag.moveTo(self.team.team_slot[slot][0] + 50, self.team.team_slot[slot][1])
+        time.sleep(.1)
+        pag.click()
+        time.sleep(.1)
+        pag.moveTo(1000, 950)
+        time.sleep(.1)
+        pag.click()
+        time.sleep(1)
+
     def roll(self):
         """
         Reroll the shop
@@ -127,6 +171,9 @@ class Game:
         pag.moveTo(200, 950)
         time.sleep(.1)
         pag.click()
+        self.gold -= 1
+        print(f'rerolled the shop')
+        time.sleep(1)
 
     def end_turn(self):
         """
@@ -135,8 +182,12 @@ class Game:
         pag.moveTo(1700, 950)
         time.sleep(.1)
         pag.click()
+        print(f'ending turn')
 
     def print_game(self):
+        """
+        Print shop and team information
+        """
         self.shop.print_shop()
         self.team.print_team()
 
@@ -183,36 +234,25 @@ def identify_food(top_left):
 if __name__ == '__main__':
 
 
-    slot_coords = [(450, 630), (590, 630), (740, 630), (890, 630), (1025, 630), (1175, 630), (1325, 630)]
-    team_coords = [(450, 350), (590, 350), (740, 350), (890, 350), (1025, 350)]
-
-    team = [None, None, None, None, None]
     res = pag.size()
     if res != (1920, 1080):
         print('not 1920x1080')
 
 
 ######################TEST ZONE#################################
-    shop_dict = {'slot_0': 'pig', 'slot_1': 'ant', 'slot_2': 'duck', 'slot_3': None, 'slot_4': None, 'slot_5': None, 'slot_6': 'apple'}
-    my_shop = Shop(slot_coords, team_coords, shop_dict)
-    team_dict = {'slot_0': 'pig', 'slot_1': 'ant', 'slot_2': 'duck', 'slot_3': 'swan', 'slot_4': 'fish'}
-    sample_team = Team(team_dict, team_coords)
-    """time.sleep(2)
-    coords = my_shop.get_shop_coords()
-    my_shop.update()
-    my_shop.print_shop()
-    time.sleep(2)
-    my_shop.roll()
-    time.sleep(2)
-    my_shop.buy(2, 0)
-    time.sleep(2)
-    my_shop.buy(1, 1)
-    time.sleep(2)
-    my_shop.buy(0, 2)
-    time.sleep(1)
-    my_shop.end_turn()
-"""
+    shop_dict = {'slot_0': None, 'slot_1': None, 'slot_2': None, 'slot_3': None, 'slot_4': None, 'slot_5': None, 'slot_6': None}
+    my_shop = Shop(shop_dict)
+    team_dict = {'slot_0': None, 'slot_1': None, 'slot_2': None, 'slot_3': None, 'slot_4': None}
+    sample_team = Team(team_dict)
+
     game = Game(my_shop, sample_team, 10, 1, 15)
+    game.shop.update()
     game.print_game()
-    game.move(0, 4)
-    game.print_game()
+    game.buy(0, 4)
+    game.buy(0, 3)
+    game.buy(0, 2)
+    game.roll()
+    game.end_turn()
+    time.sleep(2)
+    game.pick_name()
+    game.end_turn()
