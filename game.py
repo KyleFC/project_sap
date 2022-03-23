@@ -106,6 +106,21 @@ class Game:
         print(f'sold {self.team.team_dict[f"slot_{slot}"]} in slot {slot}')
         self.team.team_dict[f'slot_{slot}'] = None
 
+    def freeze(self, slot):
+        """
+        freeze a pet or food in the shop.
+        """
+        pag.moveTo(self.shop.shop_slot[slot][0] + 50, self.shop.shop_slot[slot][1])
+        time.sleep(.1)
+        pag.click()
+        time.sleep(.1)
+        pag.moveTo(1000, 950)
+        time.sleep(.1)
+        pag.click()
+        time.sleep(1)
+        print(f'froze {self.team.shop_dict[f"slot_{slot}"]} in slot {slot}')
+
+
     def roll(self):
         """
         Reroll the shop
@@ -132,6 +147,6 @@ class Game:
         """
         self.shop.print_shop()
         self.team.print_team()
-        
+
 if __name__ == '__main__':
     pass

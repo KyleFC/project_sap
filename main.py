@@ -3,6 +3,7 @@ import shop
 import team
 import game
 import SAP_CV
+import events
 
 if __name__ == '__main__':
     shop_dict = {'slot_0': None, 'slot_1': None, 'slot_2': None, 'slot_3': None, 'slot_4': None, 'slot_5': None, 'slot_6': None}
